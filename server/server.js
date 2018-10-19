@@ -6,6 +6,7 @@ var {ObjectID}=require('mongodb');
 var {mongoose}=require('./db/mongoose');
 var {Todo}=require('./models/Todos');
 var {Users}=require('./models/Users');
+var {authenticate}=require('./middleware/authenticate');
 
 var app=express();
 
@@ -102,17 +103,10 @@ app.post('/users',(req,res)=>{
         });
 });
 
-app.get('/users/me',(req,res)=>{
-    var token=req.header('x-auth');
-    
-    Users.findByToken(token).then((user)=>{
-        if(!user){
-            return Promise.reject();
-        }
-    res.send(user);
-    }).catch((e)=>{
-        res.status(401).send(e);
-    });
+//authenticate
+
+app.get('/users/me',authenticate,(req,res)=>{
+   res.send(req.user); 
 });
 
 
