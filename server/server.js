@@ -88,6 +88,8 @@ app.patch('/todos/:id',(req,res)=>{
      }); 
 });
 
+//users signUp
+
 app.post('/users',(req,res)=>{
     var body=_.pick(req.body,['email','password']);
     var user=new Users(body);
@@ -98,6 +100,19 @@ app.post('/users',(req,res)=>{
         }).catch((e)=>{
             res.status(400).send(e);
         });
+});
+
+app.get('/users/me',(req,res)=>{
+    var token=req.header('x-auth');
+    
+    Users.findByToken(token).then((user)=>{
+        if(!user){
+            return Promise.reject();
+        }
+    res.send(user);
+    }).catch((e)=>{
+        res.status(401).send(e);
+    });
 });
 
 
