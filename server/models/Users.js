@@ -3,6 +3,8 @@ const mongoose=require('mongoose');
 const validator=require('validator');
 const jwt=require('jsonwebtoken');
 const _=require('lodash');
+const bcrypt=require('bcryptjs');
+
 
 var UsersSchema=new mongoose.Schema({
         email:{
@@ -66,6 +68,25 @@ UsersSchema.statics.findByToken=function(token){
         'tokens.access':'auth'
     });
 };
+
+//saving data before update
+
+UsersSchema.pre('save',function(next){
+    var user=this;
+
+    if(user.isModified){
+
+        bcrypt.genSalt(10,(err,salt)=>{
+            bcrypt.hash(user.password,salt,(err,hash)=>{
+                user.password=hash;
+                next();
+            })
+        });   
+    }
+    else{
+        next();
+    }
+});
 
 var Users=mongoose.model('Users',UsersSchema);
 

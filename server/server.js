@@ -1,3 +1,5 @@
+require('./config/config')
+
 const express=require('express');
 const bodyParser=require('body-parser');
 const _=require('lodash');
@@ -10,7 +12,7 @@ var {authenticate}=require('./middleware/authenticate');
 
 var app=express();
 
-var port=process.env.port || 3000;
+var port=process.env.port;
 
 
 app.use(bodyParser.json());
@@ -88,6 +90,8 @@ app.patch('/todos/:id',(req,res)=>{
          res.status(400).send()
      }); 
 });
+
+
 
 //users signUp
 
