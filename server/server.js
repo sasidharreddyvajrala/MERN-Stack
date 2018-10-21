@@ -92,7 +92,6 @@ app.patch('/todos/:id',(req,res)=>{
 });
 
 
-
 //users signUp
 
 app.post('/users',(req,res)=>{
@@ -107,6 +106,19 @@ app.post('/users',(req,res)=>{
         });
 });
 
+//users login
+///users/login pass[email,password]
+app.post('/users/login',(req,res)=>{
+    var body=_.pick(req.body,['email','password']);
+    Users.findByCredentials(body.email,body.password).then((user)=>{
+        console.log("user: ",user);
+        res.send(user);
+    }).catch((e)=>{
+
+         res.status(400).send(e);
+    });
+    
+});
 //authenticate
 
 app.get('/users/me',authenticate,(req,res)=>{

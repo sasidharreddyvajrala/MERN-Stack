@@ -40,7 +40,7 @@ UsersSchema.methods.toJSON=function(){
     return _.pick(userObject,['_id','email']);
 }
 
-
+//Generateing Token
 UsersSchema.methods.generateAuthToken=function(){
 
     var user=this;
@@ -53,6 +53,32 @@ UsersSchema.methods.generateAuthToken=function(){
     });
 };
 
+//Finding User credantials
+UsersSchema.statics.findByCredentials=function(email,password){
+    var User=this;
+
+    return User.findOne({email}).then((user)=>{
+        if(!user){
+            return Promise.reject();
+        }
+        return new Promise((resolve,reject)=>{
+            console.log("user in call :", user);
+             bcrypt.compare(password,user.password,(err,res)=>{
+                 console.log(password);
+                 console.log(user.password);
+                 console.log(res);
+                 if(res){
+                    resolve(user);
+                 }else{
+                     reject();
+                 }
+            });
+        }); 
+    });
+};
+
+
+//Finding user by token
 UsersSchema.statics.findByToken=function(token){
     var User=this;
     var decoded;
