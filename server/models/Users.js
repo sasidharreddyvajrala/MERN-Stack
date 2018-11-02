@@ -6,7 +6,7 @@ const _=require('lodash');
 const bcrypt=require('bcryptjs');
 
 
-var UsersSchema=new mongoose.Schema({
+const UsersSchema=new mongoose.Schema({
         email:{
             type:String,
             required:true,
@@ -34,8 +34,8 @@ var UsersSchema=new mongoose.Schema({
 });
 
 UsersSchema.methods.toJSON=function(){
-    var user=this;
-    var userObject=user.toObject();
+    const user=this;
+    const userObject=user.toObject();
 
     return _.pick(userObject,['_id','email']);
 }
@@ -43,9 +43,9 @@ UsersSchema.methods.toJSON=function(){
 //Generateing Token
 UsersSchema.methods.generateAuthToken=function(){
 
-    var user=this;
-    var access='auth';
-    var token=jwt.sign({_id:user._id.toHexString(),access},'abc123').toString();
+    const user=this;
+    const access='auth';
+    const token=jwt.sign({_id:user._id.toHexString(),access},process.env.JWT_SECRECT).toString();
     user.tokens=user.tokens.concat([{access,token}]);
 
     return user.save().then(()=>{
@@ -55,18 +55,14 @@ UsersSchema.methods.generateAuthToken=function(){
 
 //Finding User credantials
 UsersSchema.statics.findByCredentials=function(email,password){
-    var User=this;
+    const User=this;
 
     return User.findOne({email}).then((user)=>{
         if(!user){
             return Promise.reject();
         }
         return new Promise((resolve,reject)=>{
-            console.log("user in call :", user);
              bcrypt.compare(password,user.password,(err,res)=>{
-                 console.log(password);
-                 console.log(user.password);
-                 console.log(res);
                  if(res){
                     resolve(user);
                  }else{
@@ -83,7 +79,7 @@ UsersSchema.statics.findByToken=function(token){
     var User=this;
     var decoded;
     try{
-      decoded=jwt.verify(token,'abc123');
+      decoded=jwt.verify(token,process.env.JWT_SECRECT);
     }catch(e){
        return Promise.reject();
     }
