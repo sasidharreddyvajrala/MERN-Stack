@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import axios from 'axios';
 import {Redirect} from 'react-router-dom';
+import CssBaseline from '@material-ui/core/CssBaseline'
 
 
 class App extends Component {
